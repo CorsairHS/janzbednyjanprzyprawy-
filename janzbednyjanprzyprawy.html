@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>janzbednyjan przyprawy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0a05;
+    --surface: #1a1007;
+    --card: #221508;
+    --gold: #c8922a;
+    --gold-light: #e8b04a;
+    --red: #c0392b;
+    --green: #4a7c3f;
+    --cream: #f5ead6;
+    --text: #f0e4cc;
+    --muted: #9a8060;
+    --border: #3a2a15;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .header-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('/mnt/user-data/uploads/1778871742419_image.png');
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.38) saturate(1.2);
+    transform: scale(1.05);
+    transition: transform 8s ease;
+  }
+
+  header:hover .header-bg { transform: scale(1); }
+
+  .header-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      rgba(15,10,5,0.2) 0%,
+      rgba(15,10,5,0.1) 40%,
+      rgba(15,10,5,0.85) 100%);
+  }
+
+  .header-content {
+    position: relative;
+    text-align: center;
+    padding: 2rem;
+    animation: fadeInUp 1.2s ease both;
+  }
+
+  .brand-badge {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    padding: 0.4rem 1.2rem;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 1s ease 0.2s both;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 9vw, 7rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+    text-shadow: 0 4px 40px rgba(200,146,42,0.3);
+    animation: fadeInUp 1s ease 0.4s both;
+  }
+
+  header h1 span {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .header-sub {
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 1.2rem;
+    animation: fadeInUp 1s ease 0.6s both;
+  }
+
+  .header-cta {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    animation: fadeInUp 1s ease 0.8s both;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    padding: 0.85rem 2.2rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--cream);
+    padding: 0.85rem 2.2rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 1px solid rgba(245,234,214,0.4);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: pulse 2s ease infinite;
+  }
+
+  .scroll-hint::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: lineGrow 2s ease infinite;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.3s, backdrop-filter 0.3s;
+  }
+
+  nav.scrolled {
+    background: rgba(15,10,5,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+
+  .nav-logo span { font-style: italic; color: var(--cream); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  .nav-cart {
+    position: relative;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 0.6rem 1.4rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nav-cart:hover { background: var(--gold-light); }
+
+  .cart-count {
+    background: var(--red);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: transform 0.3s;
+  }
+
+  .cart-count.bump { transform: scale(1.5); }
+
+  /* ── SECTIONS ── */
+  section { padding: 6rem 4rem; }
+
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 1rem;
+    line-height: 1.15;
+  }
+
+  .section-title em { color: var(--gold); font-style: italic; }
+
+  .section-desc {
+    color: var(--muted);
+    max-width: 500px;
+    line-height: 1.8;
+    font-size: 0.95rem;
+    margin-bottom: 3rem;
+  }
+
+  /* ── CATEGORIES ── */
+  #sklep { background: var(--surface); }
+
+  .category-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .cat-tab {
+    padding: 0.5rem 1.4rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Lato', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .cat-tab:hover, .cat-tab.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(200,146,42,0.08);
+  }
+
+  /* ── PRODUCT GRID ── */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .product-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    animation: fadeInUp 0.5s ease both;
+  }
+
+  .product-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--gold);
+    box-shadow: 0 20px 60px rgba(200,146,42,0.12);
+  }
+
+  .product-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+    filter: saturate(1.15);
+  }
+
+  .product-emoji-img {
+    width: 100%;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    background: linear-gradient(135deg, var(--surface), var(--border));
+  }
+
+  .product-body { padding: 1.2rem; }
+
+  .product-cat {
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 0.3rem;
+  }
+
+  .product-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    min-height: 2.5rem;
+  }
+
+  .product-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .product-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .product-price span {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+  }
+
+  .add-to-cart {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .add-to-cart:hover { background: var(--gold-light); }
+  .add-to-cart:active { transform: scale(0.9); }
+  .add-to-cart.added { background: var(--green); }
+
+  /* ── CART DRAWER ── */
+  .cart-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .cart-backdrop.open { opacity: 1; pointer-events: all; }
+
+  .cart-drawer {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 420px;
+    max-width: 100vw;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    z-index: 201;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .cart-drawer.open { transform: translateX(0); }
+
+  .cart-header {
+    padding: 1.8rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cart-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--cream);
+  }
+
+  .cart-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+  }
+
+  .cart-close:hover { color: var(--gold); }
+
+  .cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cart-items::-webkit-scrollbar { width: 4px; }
+  .cart-items::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .cart-empty {
+    text-align: center;
+    color: var(--muted);
+    margin-top: 4rem;
+    font-style: italic;
+  }
+
+  .cart-empty .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+  .cart-item {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    animation: fadeInUp 0.3s ease;
+  }
+
+  .cart-item-icon { font-size: 2rem; flex-shrink: 0; }
+
+  .cart-item-info { flex: 1 }
+
+  .cart-item-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--cream);
+    margin-bottom: 0.2rem;
+  }
+
+  .cart-item-price { font-size: 0.8rem; color: var(--gold); }
+
+  .cart-item-qty {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .qty-btn {
+    background: var(--border);
+    border: none;
+    color: var(--text);
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qty-btn:hover { background: var(--gold); color: var(--bg); }
+
+  .qty-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--cream);
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .cart-footer {
+    padding: 1.8rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .cart-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+  }
+
+  .cart-total-label { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+
+  .cart-total-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--gold);
+  }
+
+  .btn-checkout {
+    width: 100%;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 1rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-checkout:hover { background: var(--gold-light); }
+
+  /* ── FEATURES ── */
+  #o-nas { background: var(--bg); }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-card {
+    padding: 2rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    transition: border-color 0.3s;
+  }
+
+  .feature-card:hover { border-color: var(--gold); }
+
+  .feature-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+
+  .feature-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-text { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── TOAST ── */
+  .toast-container {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    pointer-events: none;
+  }
+
+  .toast {
+    background: var(--green);
+    color: white;
+    padding: 0.7rem 1.5rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2s both;
+    pointer-events: none;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #070503;
+    border-top: 1px solid var(--border);
+    padding: 3rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--gold);
+  }
+
+  .footer-brand span { font-style: italic; color: var(--muted); }
+
+  .footer-copy { font-size: 0.78rem; color: var(--muted); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; } 50% { opacity: 1; }
+  }
+
+  @keyframes lineGrow {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes toastOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  /* ── DIVIDER ── */
+  .ornament {
+    text-align: center;
+    color: var(--gold);
+    font-size: 1.2rem;
+    letter-spacing: 0.5em;
+    margin: 0.5rem 0 2rem;
+    opacity: 0.5;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; }
+    footer { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a class="nav-logo" href="#">jan<span>zbednyjan</span></a>
+  <ul class="nav-links">
+    <li><a href="#sklep">Sklep</a></li>
+    <li><a href="#o-nas">O nas</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+  <button class="nav-cart" onclick="toggleCart()">
+    🛒 Koszyk
+    <span class="cart-count" id="cartCount">0</span>
+  </button>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <div class="header-bg"></div>
+  <div class="header-overlay"></div>
+  <div class="header-content">
+    <div class="brand-badge">Sklep internetowy · Przyprawy premium</div>
+    <h1>janzbednyjan<br><span>przyprawy</span></h1>
+    <p class="header-sub">Smak, który zmienia wszystko</p>
+    <div class="header-cta">
+      <a href="#sklep" class="btn-primary">Przeglądaj ofertę</a>
+      <a href="#o-nas" class="btn-outline">O nas</a>
+    </div>
+  </div>
+  <div class="scroll-hint">Przewiń w dół</div>
+</header>
+
+<!-- SKLEP -->
+<section id="sklep">
+  <div class="section-label">Asortyment</div>
+  <h2 class="section-title">Nasze <em>przyprawy</em></h2>
+  <div class="ornament">✦ ✦ ✦</div>
+  <p class="section-desc">Selekcjonowane przyprawy z całego świata — od klasycznych ziół po egzotyczne mieszanki. Świeżość i jakość gwarantowane.</p>
+
+  <div class="category-tabs" id="categoryTabs">
+    <button class="cat-tab active" onclick="filterCat(this,'wszystkie')">Wszystkie</button>
+    <button class="cat-tab" onclick="filterCat(this,'klasyczne')">Klasyczne</button>
+    <button class="cat-tab" onclick="filterCat(this,'egzotyczne')">Egzotyczne</button>
+    <button class="cat-tab" onclick="filterCat(this,'mieszanki')">Mieszanki</button>
+    <button class="cat-tab" onclick="filterCat(this,'zioła')">Zioła</button>
+  </div>
+
+  <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<!-- O NAS -->
+<section id="o-nas">
+  <div class="section-label">Dlaczego my?</div>
+  <h2 class="section-title">Pasja do <em>smaku</em></h2>
+  <div class="ornament">✦ ✦ ✦</div>
+  <p class="section-desc">Oferujemy wyłącznie przyprawy najwyższej jakości — bez wypełniaczy, bez sztucznych barwników. Tylko czysta, intensywna natura.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🌿</div>
+      <div class="feature-title">Naturalne składniki</div>
+      <div class="feature-text">Każda przyprawa pochodzi ze sprawdzonego źródła. Bez konserwantów, bez ulepszaczy — 100% natury.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✈️</div>
+      <div class="feature-title">Dostawa w 24h</div>
+      <div class="feature-text">Szybka wysyłka do całej Polski. Zamówienia złożone do 14:00 wysyłamy tego samego dnia roboczego.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <div class="feature-title">Premium jakość</div>
+      <div class="feature-text">Rygorystyczna kontrola jakości na każdym etapie. Tylko produkty, z których sami jesteśmy dumni.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💚</div>
+      <div class="feature-title">Zrównoważone źródła</div>
+      <div class="feature-text">Współpracujemy z lokalnymi producentami dbającymi o środowisko i sprawiedliwe warunki pracy.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="kontakt">
+  <div>
+    <div class="footer-brand">janzbednyjan <span>przyprawy</span></div>
+    <div style="margin-top:0.5rem; font-size:0.8rem; color:var(--muted);">kontakt@janzbednyjan.pl · +48 500 123 456</div>
+  </div>
+  <div class="footer-copy">© 2025 janzbednyjan przyprawy. Wszelkie prawa zastrzeżone.</div>
+</footer>
+
+<!-- CART DRAWER -->
+<div class="cart-backdrop" id="cartBackdrop" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <div class="cart-title">Twój koszyk</div>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <div class="empty-icon">🛒</div>
+      <div>Koszyk jest pusty</div>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <div class="cart-total-label">Razem</div>
+      <div class="cart-total-price" id="cartTotal">0,00 zł</div>
+    </div>
+    <button class="btn-checkout" onclick="checkout()">Przejdź do kasy</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const products = [
+  { id:1, name:'Kurkuma', cat:'egzotyczne', emoji:'🟡', price:8.99, desc:'Intensywna, lekko gorzka. Król azjatyckich kuchni.' },
+  { id:2, name:'Cynamon cejloński', cat:'egzotyczne', emoji:'🟤', price:12.50, desc:'Delikatny, słodki. Klasyk wypieków i grzańca.' },
+  { id:3, name:'Kardamon zielony', cat:'egzotyczne', emoji:'💚', price:18.90, desc:'Aromatyczny, kwiatowy. Esencja herbaty masala chai.' },
+  { id:4, name:'Pieprz czarny', cat:'klasyczne', emoji:'⚫', price:9.50, desc:'Ostry, dymny. Niezbędnik każdej kuchni.' },
+  { id:5, name:'Sól himalajska', cat:'klasyczne', emoji:'🩷', price:7.20, desc:'Różowa, mineralna. Finiszowa sól do wszystkiego.' },
+  { id:6, name:'Papryka wędzona', cat:'klasyczne', emoji:'🔴', price:11.00, desc:'Głęboka, dymna. Magia hiszpańskiej kuchni.' },
+  { id:7, name:'Oregano', cat:'zioła', emoji:'🌿', price:6.80, desc:'Śródziemnomorskie, intensywne. Idealne do pizzy.' },
+  { id:8, name:'Rozmaryn', cat:'zioła', emoji:'🫧', price:7.40, desc:'Sosnowy, odświeżający. Król ziół do mięs.' },
+  { id:9, name:'Tymianek', cat:'zioła', emoji:'🌱', price:6.50, desc:'Ziemisty, lekko cytrusowy. Podstawa bulionu.' },
+  { id:10, name:'Ras el Hanout', cat:'mieszanki', emoji:'🌺', price:22.00, desc:'Marokańska mieszanka 20+ przypraw. Tagine w proszku.' },
+  { id:11, name:'Garam masala', cat:'mieszanki', emoji:'🧡', price:19.50, desc:'Klasyczna mieszanka indyjska. Ciepło i głębia.' },
+  { id:12, name:'Sumak', cat:'egzotyczne', emoji:'🍷', price:14.90, desc:'Kwaskowaty, owocowy. Bliski Wschód na talerzu.' },
+  { id:13, name:'Anyż gwiazdkowy', cat:'egzotyczne', emoji:'⭐', price:13.70, desc:'Słodki, lukrecjowy. Aromat bożonarodzeniowy.' },
+  { id:14, name:'Kmin rzymski', cat:'klasyczne', emoji:'🌾', price:9.80, desc:'Ziemisty, orzechowy. Dusza kuchni meksykańskiej.' },
+  { id:15, name:'Herbs de Provence', cat:'mieszanki', emoji:'💜', price:16.90, desc:'Lawenda, tymianek, rozmaryn. Południe Francji.' },
+  { id:16, name:'Fenugreek', cat:'egzotyczne', emoji:'🟫', price:10.20, desc:'Gorzki, mapelowy. Sekretny składnik curry.' },
+];
+
+let cart = {};
+let activeCategory = 'wszystkie';
+
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  const filtered = activeCategory === 'wszystkie' ? products : products.filter(p => p.cat === activeCategory);
+  grid.innerHTML = filtered.map((p, i) => `
+    <div class="product-card" style="animation-delay:${i*0.06}s">
+      <div class="product-emoji-img">${p.emoji}</div>
+      <div class="product-body">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <div class="product-price">${p.price.toFixed(2).replace('.',',')} <span>zł / 50g</span></div>
+          <button class="add-to-cart" id="btn-${p.id}" onclick="addToCart(${p.id})" title="Dodaj do koszyka">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCat(el, cat) {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  activeCategory = cat;
+  renderProducts();
+}
+
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  cart[id] = (cart[id] || 0) + 1;
+  updateCartUI();
+  const btn = document.getElementById('btn-'+id);
+  if (btn) {
+    btn.classList.add('added');
+    btn.textContent = '✓';
+    setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+'; }, 900);
+  }
+  showToast('✦ ' + p.name + ' dodano do koszyka');
+  const count = document.getElementById('cartCount');
+  count.classList.add('bump');
+  setTimeout(() => count.classList.remove('bump'), 300);
+}
+
+function removeFromCart(id) {
+  if (cart[id] > 1) cart[id]--;
+  else delete cart[id];
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const total = Object.entries(cart).reduce((s, [id, q]) => {
+    const p = products.find(x => x.id == id);
+    return s + (p ? p.price * q : 0);
+  }, 0);
+  const count = Object.values(cart).reduce((s, q) => s + q, 0);
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartTotal').textContent = total.toFixed(2).replace('.',',') + ' zł';
+
+  const container = document.getElementById('cartItems');
+  if (count === 0) {
+    container.innerHTML = `<div class="cart-empty"><div class="empty-icon">🛒</div><div>Koszyk jest pusty</div></div>`;
+    return;
+  }
+  container.innerHTML = Object.entries(cart).map(([id, qty]) => {
+    const p = products.find(x => x.id == id);
+    if (!p) return '';
+    return `
+      <div class="cart-item">
+        <div class="cart-item-icon">${p.emoji}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${p.name}</div>
+          <div class="cart-item-price">${(p.price * qty).toFixed(2).replace('.',',')} zł</div>
+        </div>
+        <div class="cart-item-qty">
+          <button class="qty-btn" onclick="removeFromCart(${id})">−</button>
+          <span class="qty-num">${qty}</span>
+          <button class="qty-btn" onclick="addToCart(${id})">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleCart() {
+  document.getElementById('cartDrawer').classList.toggle('open');
+  document.getElementById('cartBackdrop').classList.toggle('open');
+}
+
+function checkout() {
+  if (Object.keys(cart).length === 0) { showToast('Koszyk jest pusty!'); return; }
+  showToast('🎉 Zamówienie złożone! Dziękujemy!');
+  cart = {};
+  updateCartUI();
+  toggleCart();
+}
+
+function showToast(msg) {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+// Sticky nav
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+});
+
+// Init
+renderProducts();
+</script>
+</body>
+</html>
