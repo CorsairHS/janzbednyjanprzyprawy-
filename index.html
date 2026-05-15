@@ -78,7 +78,7 @@
     border: 1px solid var(--gold);
     color: var(--gold);
     font-family: 'Lato', sans-serif;
-    font-size: 1rem;
+    font-size: 0.7rem;
     letter-spacing: 0.35em;
     text-transform: uppercase;
     padding: 0.4rem 1.2rem;
@@ -703,11 +703,366 @@
     opacity: 0.5;
   }
 
+  /* ── CHECKOUT MODAL ── */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.82);
+    backdrop-filter: blur(6px);
+    z-index: 300;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+  .checkout-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 860px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .modal-backdrop.open .checkout-modal { transform: translateY(0) scale(1); }
+
+  .modal-top {
+    padding: 2rem 2.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--cream);
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+  }
+  .modal-close:hover { color: var(--gold); }
+
+  /* Steps indicator */
+  .steps-bar {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    gap: 0;
+  }
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+  }
+
+  .step-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .step-item.active .step-circle { border-color: var(--gold); color: var(--gold); background: rgba(200,146,42,0.12); }
+  .step-item.done .step-circle { border-color: var(--green); color: white; background: var(--green); }
+
+  .step-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.3s;
+  }
+  .step-item.active .step-label { color: var(--gold); }
+  .step-item.done .step-label { color: var(--green); }
+
+  .step-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin: 0 0.8rem;
+    transition: background 0.3s;
+  }
+  .step-line.done { background: var(--green); }
+
+  /* Modal body */
+  .modal-body { padding: 2rem 2.5rem; }
+
+  .checkout-step { display: none; }
+  .checkout-step.active { display: block; animation: fadeInUp 0.3s ease; }
+
+  /* Form */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  .form-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .form-input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    padding: 0.75rem 1rem;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    outline: none;
+    width: 100%;
+  }
+  .form-input:focus { border-color: var(--gold); }
+  .form-input.error { border-color: var(--red); }
+
+  .form-error {
+    font-size: 0.72rem;
+    color: var(--red);
+    min-height: 1rem;
+  }
+
+  /* Delivery options */
+  .delivery-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .delivery-opt {
+    border: 1px solid var(--border);
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .delivery-opt:hover { border-color: var(--muted); }
+  .delivery-opt.selected { border-color: var(--gold); background: rgba(200,146,42,0.07); }
+
+  .delivery-opt-top { display: flex; align-items: center; gap: 0.6rem; }
+
+  .delivery-radio {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .delivery-opt.selected .delivery-radio { border-color: var(--gold); }
+  .delivery-opt.selected .delivery-radio::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .delivery-icon { font-size: 1.3rem; }
+  .delivery-name { font-size: 0.85rem; color: var(--cream); font-weight: 700; }
+  .delivery-desc { font-size: 0.75rem; color: var(--muted); }
+  .delivery-price { font-size: 0.9rem; color: var(--gold); font-weight: 700; margin-top: 0.2rem; }
+
+  /* Payment options */
+  .payment-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .payment-opt {
+    border: 1px solid var(--border);
+    padding: 1.4rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .payment-opt:hover { border-color: var(--muted); }
+  .payment-opt.selected { border-color: var(--gold); background: rgba(200,146,42,0.07); }
+
+  .payment-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .payment-name { font-size: 0.82rem; color: var(--cream); font-weight: 700; letter-spacing: 0.05em; }
+  .payment-desc { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; }
+
+  /* Card fields */
+  .card-fields {
+    display: none;
+    animation: fadeInUp 0.3s ease;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-top: 1rem;
+  }
+  .card-fields.visible { display: block; }
+
+  .card-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; }
+
+  /* Order summary in modal */
+  .modal-order-summary {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .summary-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--cream);
+    margin-bottom: 1rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    font-size: 0.85rem;
+  }
+
+  .summary-item-name { color: var(--text); }
+  .summary-item-price { color: var(--gold); font-weight: 700; }
+
+  .summary-divider { border: none; border-top: 1px solid var(--border); margin: 0.8rem 0; }
+
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 0.5rem;
+  }
+
+  .summary-total-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+  .summary-total-val { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold); }
+
+  /* Modal footer buttons */
+  .modal-footer {
+    padding: 1.5rem 2.5rem 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn-back {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.8rem 2rem;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--gold); color: var(--gold); }
+
+  .btn-next {
+    background: var(--gold);
+    border: none;
+    color: var(--bg);
+    padding: 0.8rem 2.5rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-next:hover { background: var(--gold-light); }
+  .btn-next:active { transform: scale(0.97); }
+
+  /* Success screen */
+  .success-screen {
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+
+  .success-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    animation: popIn 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .success-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--cream);
+    margin-bottom: 0.8rem;
+  }
+
+  .success-sub { color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-bottom: 2rem; }
+
+  .order-number {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    padding: 0.6rem 2rem;
+    margin-bottom: 2rem;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
   @media (max-width: 768px) {
     nav { padding: 1rem 1.5rem; }
     .nav-links { display: none; }
     section { padding: 4rem 1.5rem; }
     footer { padding: 2rem 1.5rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .card-row { grid-template-columns: 1fr; }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer { padding: 1rem 1.5rem; }
+    .modal-top { padding: 1.5rem; }
+    .steps-bar { padding: 1rem 1.5rem; }
+    .step-label { display: none; }
   }
 </style>
 </head>
@@ -819,6 +1174,158 @@
       <div class="cart-total-price" id="cartTotal">0,00 zł</div>
     </div>
     <button class="btn-checkout" onclick="checkout()">Przejdź do kasy</button>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-backdrop" id="checkoutBackdrop">
+  <div class="checkout-modal" id="checkoutModal">
+    <div class="modal-top">
+      <div class="modal-title">Finalizacja zamówienia</div>
+      <button class="modal-close" onclick="closeCheckout()">✕</button>
+    </div>
+    <div class="steps-bar">
+      <div class="step-item active" id="step-ind-1"><div class="step-circle">1</div><div class="step-label">Dostawa</div></div>
+      <div class="step-line" id="line-1"></div>
+      <div class="step-item" id="step-ind-2"><div class="step-circle">2</div><div class="step-label">Adres</div></div>
+      <div class="step-line" id="line-2"></div>
+      <div class="step-item" id="step-ind-3"><div class="step-circle">3</div><div class="step-label">Płatność</div></div>
+      <div class="step-line" id="line-3"></div>
+      <div class="step-item" id="step-ind-4"><div class="step-circle">4</div><div class="step-label">Podsumowanie</div></div>
+    </div>
+
+    <!-- STEP 1: Delivery -->
+    <div class="checkout-step active" id="checkout-step-1">
+      <div class="modal-body">
+        <p class="section-label" style="margin-bottom:1.2rem;">Wybierz metodę dostawy</p>
+        <div class="delivery-options">
+          <div class="delivery-opt selected" onclick="selectDelivery(this,'inpost',9.99)">
+            <div class="delivery-opt-top"><div class="delivery-radio"></div><div class="delivery-icon">📦</div><div class="delivery-name">InPost Paczkomat</div></div>
+            <div class="delivery-desc">Odbiór w paczkomacie · 1–2 dni</div>
+            <div class="delivery-price">9,99 zł</div>
+          </div>
+          <div class="delivery-opt" onclick="selectDelivery(this,'kurier',14.99)">
+            <div class="delivery-opt-top"><div class="delivery-radio"></div><div class="delivery-icon">🚚</div><div class="delivery-name">Kurier DPD</div></div>
+            <div class="delivery-desc">Dostawa do drzwi · 1–2 dni</div>
+            <div class="delivery-price">14,99 zł</div>
+          </div>
+          <div class="delivery-opt" onclick="selectDelivery(this,'poczta',8.50)">
+            <div class="delivery-opt-top"><div class="delivery-radio"></div><div class="delivery-icon">✉️</div><div class="delivery-name">Poczta Polska</div></div>
+            <div class="delivery-desc">List polecony · 3–5 dni</div>
+            <div class="delivery-price">8,50 zł</div>
+          </div>
+          <div class="delivery-opt" onclick="selectDelivery(this,'free',0)">
+            <div class="delivery-opt-top"><div class="delivery-radio"></div><div class="delivery-icon">🎁</div><div class="delivery-name">Odbiór osobisty</div></div>
+            <div class="delivery-desc">Warszawa, ul. Złota 7 · pon–pt</div>
+            <div class="delivery-price">Bezpłatnie</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-back" onclick="closeCheckout()">Wróć do koszyka</button>
+        <button class="btn-next" onclick="goStep(2)">Dalej — Adres →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Address -->
+    <div class="checkout-step" id="checkout-step-2">
+      <div class="modal-body">
+        <p class="section-label" style="margin-bottom:1.2rem;">Dane odbiorcy i adres dostawy</p>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Imię *</label><input class="form-input" id="f-name" type="text" placeholder="Jan"><div class="form-error" id="err-name"></div></div>
+          <div class="form-group"><label class="form-label">Nazwisko *</label><input class="form-input" id="f-surname" type="text" placeholder="Kowalski"><div class="form-error" id="err-surname"></div></div>
+          <div class="form-group full"><label class="form-label">Adres e-mail *</label><input class="form-input" id="f-email" type="email" placeholder="jan@przykład.pl"><div class="form-error" id="err-email"></div></div>
+          <div class="form-group"><label class="form-label">Telefon *</label><input class="form-input" id="f-phone" type="tel" placeholder="+48 500 000 000"><div class="form-error" id="err-phone"></div></div>
+          <div class="form-group"><label class="form-label">Kod pocztowy *</label><input class="form-input" id="f-zip" type="text" placeholder="00-001"><div class="form-error" id="err-zip"></div></div>
+          <div class="form-group full"><label class="form-label">Ulica i numer *</label><input class="form-input" id="f-street" type="text" placeholder="ul. Przykładowa 12/3"><div class="form-error" id="err-street"></div></div>
+          <div class="form-group"><label class="form-label">Miasto *</label><input class="form-input" id="f-city" type="text" placeholder="Warszawa"><div class="form-error" id="err-city"></div></div>
+          <div class="form-group"><label class="form-label">Kraj</label><input class="form-input" id="f-country" type="text" value="Polska"></div>
+          <div class="form-group full"><label class="form-label">Uwagi do zamówienia</label><input class="form-input" id="f-note" type="text" placeholder="np. dzwonek nie działa, proszę dzwonić"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-back" onclick="goStep(1)">← Wróć</button>
+        <button class="btn-next" onclick="validateAndGoStep3()">Dalej — Płatność →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Payment -->
+    <div class="checkout-step" id="checkout-step-3">
+      <div class="modal-body">
+        <p class="section-label" style="margin-bottom:1.2rem;">Metoda płatności</p>
+        <div class="payment-options">
+          <div class="payment-opt selected" onclick="selectPayment(this,'blik')"><div class="payment-icon">📱</div><div class="payment-name">BLIK</div><div class="payment-desc">Jednorazowy kod z aplikacji bankowej</div></div>
+          <div class="payment-opt" onclick="selectPayment(this,'card')"><div class="payment-icon">💳</div><div class="payment-name">Karta płatnicza</div><div class="payment-desc">Visa, Mastercard, Maestro</div></div>
+          <div class="payment-opt" onclick="selectPayment(this,'transfer')"><div class="payment-icon">🏦</div><div class="payment-name">Przelew online</div><div class="payment-desc">Płatność przez bank (P24)</div></div>
+          <div class="payment-opt" onclick="selectPayment(this,'cod')"><div class="payment-icon">💵</div><div class="payment-name">Za pobraniem</div><div class="payment-desc">Płatność przy odbiorze (+2,00 zł)</div></div>
+        </div>
+        <div class="card-fields visible" id="blik-fields">
+          <p class="form-label" style="margin-bottom:0.8rem;">Wpisz 6-cyfrowy kod BLIK</p>
+          <input class="form-input" id="blik-code" type="text" maxlength="6" placeholder="000 000" style="font-size:1.6rem;letter-spacing:0.4em;text-align:center;max-width:220px;">
+          <div class="form-error" id="err-blik"></div>
+        </div>
+        <div class="card-fields" id="card-fields">
+          <p class="form-label" style="margin-bottom:1rem;">Dane karty</p>
+          <div class="form-group full" style="margin-bottom:1rem;"><label class="form-label">Numer karty</label><input class="form-input" id="card-num" type="text" maxlength="19" placeholder="0000 0000 0000 0000" oninput="formatCardNum(this)"></div>
+          <div class="card-row">
+            <div class="form-group"><label class="form-label">Imię i Nazwisko</label><input class="form-input" id="card-name" type="text" placeholder="JAN KOWALSKI"></div>
+            <div class="form-group"><label class="form-label">Ważna do</label><input class="form-input" id="card-exp" type="text" maxlength="5" placeholder="MM/RR" oninput="formatExpiry(this)"></div>
+            <div class="form-group"><label class="form-label">CVV</label><input class="form-input" id="card-cvv" type="password" maxlength="3" placeholder="•••"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-back" onclick="goStep(2)">← Wróć</button>
+        <button class="btn-next" onclick="validatePaymentAndGoStep4()">Dalej — Podsumowanie →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Summary -->
+    <div class="checkout-step" id="checkout-step-4">
+      <div class="modal-body">
+        <p class="section-label" style="margin-bottom:1.2rem;">Sprawdź zamówienie przed złożeniem</p>
+        <div class="modal-order-summary">
+          <div class="summary-title">Produkty</div>
+          <div id="modal-cart-lines"></div>
+          <hr class="summary-divider">
+          <div class="summary-item"><span class="summary-item-name">Dostawa</span><span class="summary-item-price" id="summary-delivery-price">—</span></div>
+          <hr class="summary-divider">
+          <div class="summary-total"><span class="summary-total-label">Do zapłaty</span><span class="summary-total-val" id="summary-grand-total">0,00 zł</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+          <div style="background:var(--card);border:1px solid var(--border);padding:1.2rem;">
+            <div class="section-label" style="margin-bottom:0.6rem;">Adres dostawy</div>
+            <div id="summary-address" style="font-size:0.85rem;color:var(--text);line-height:1.8;"></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);padding:1.2rem;">
+            <div class="section-label" style="margin-bottom:0.6rem;">Metoda płatności</div>
+            <div id="summary-payment" style="font-size:0.85rem;color:var(--text);line-height:1.8;"></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:0.7rem;padding:1rem;background:rgba(200,146,42,0.07);border:1px solid rgba(200,146,42,0.2);">
+          <input type="checkbox" id="terms-check" style="margin-top:3px;accent-color:var(--gold);width:16px;height:16px;flex-shrink:0;">
+          <label for="terms-check" style="font-size:0.8rem;color:var(--muted);line-height:1.6;cursor:pointer;">Akceptuję <span style="color:var(--gold);">regulamin sklepu</span> i <span style="color:var(--gold);">politykę prywatności</span>. Wyrażam zgodę na przetwarzanie danych osobowych w celu realizacji zamówienia.</label>
+        </div>
+        <div class="form-error" id="err-terms" style="margin-top:0.3rem;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-back" onclick="goStep(3)">← Wróć</button>
+        <button class="btn-next" style="background:var(--green);padding:0.8rem 2.8rem;" onclick="placeOrder()">✓ Złóż zamówienie</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: Success -->
+    <div class="checkout-step" id="checkout-step-5">
+      <div class="success-screen">
+        <div class="success-icon">🎉</div>
+        <h2 class="success-title">Zamówienie złożone!</h2>
+        <p class="success-sub">Dziękujemy za zakup w janzbednyjan przyprawy.<br>Potwierdzenie wysłaliśmy na podany adres e-mail.</p>
+        <div class="order-number" id="order-number">#JZJ-00000</div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:2rem;">Szacowany czas dostawy: <span style="color:var(--gold);">1–2 dni robocze</span></p>
+        <button class="btn-primary" onclick="finishOrder()">Wróć do sklepu</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -936,13 +1443,169 @@ function toggleCart() {
   document.getElementById('cartBackdrop').classList.toggle('open');
 }
 
+// ── CHECKOUT ──
+let selectedDelivery = { name: 'InPost Paczkomat', price: 9.99 };
+let selectedPaymentMethod = 'blik';
+let currentStep = 1;
+
 function checkout() {
   if (Object.keys(cart).length === 0) { showToast('Koszyk jest pusty!'); return; }
-  showToast('🎉 Zamówienie złożone! Dziękujemy!');
+  toggleCart();
+  setTimeout(() => {
+    currentStep = 1;
+    goStep(1);
+    document.getElementById('checkoutBackdrop').classList.add('open');
+  }, 350);
+}
+
+function closeCheckout() {
+  document.getElementById('checkoutBackdrop').classList.remove('open');
+}
+
+function goStep(n) {
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById('checkout-step-' + i).classList.remove('active');
+    const ind = document.getElementById('step-ind-' + i);
+    if (ind) { ind.classList.remove('active', 'done'); }
+  }
+  for (let i = 1; i <= 3; i++) {
+    const line = document.getElementById('line-' + i);
+    if (line) line.classList.remove('done');
+  }
+  document.getElementById('checkout-step-' + n).classList.add('active');
+  for (let i = 1; i < n; i++) {
+    const ind = document.getElementById('step-ind-' + i);
+    if (ind) ind.classList.add('done');
+    const line = document.getElementById('line-' + i);
+    if (line) line.classList.add('done');
+  }
+  const cur = document.getElementById('step-ind-' + n);
+  if (cur) cur.classList.add('active');
+  currentStep = n;
+  document.getElementById('checkoutModal').scrollTop = 0;
+}
+
+function selectDelivery(el, key, price) {
+  document.querySelectorAll('.delivery-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDelivery = { name: el.querySelector('.delivery-name').textContent, price };
+}
+
+function selectPayment(el, method) {
+  document.querySelectorAll('.payment-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPaymentMethod = method;
+  document.getElementById('blik-fields').classList.remove('visible');
+  document.getElementById('card-fields').classList.remove('visible');
+  if (method === 'blik') document.getElementById('blik-fields').classList.add('visible');
+  if (method === 'card') document.getElementById('card-fields').classList.add('visible');
+}
+
+function validateAndGoStep3() {
+  let ok = true;
+  const fields = [
+    ['f-name','err-name','Imię jest wymagane'],
+    ['f-surname','err-surname','Nazwisko jest wymagane'],
+    ['f-email','err-email','Podaj prawidłowy e-mail'],
+    ['f-phone','err-phone','Telefon jest wymagany'],
+    ['f-zip','err-zip','Kod pocztowy jest wymagany'],
+    ['f-street','err-street','Adres jest wymagany'],
+    ['f-city','err-city','Miasto jest wymagane'],
+  ];
+  fields.forEach(([fid, eid, msg]) => {
+    const el = document.getElementById(fid);
+    const err = document.getElementById(eid);
+    const val = el.value.trim();
+    if (!val || (fid === 'f-email' && !/\S+@\S+\.\S+/.test(val))) {
+      el.classList.add('error'); err.textContent = msg; ok = false;
+    } else {
+      el.classList.remove('error'); err.textContent = '';
+    }
+  });
+  if (ok) goStep(3);
+}
+
+function validatePaymentAndGoStep4() {
+  let ok = true;
+  if (selectedPaymentMethod === 'blik') {
+    const code = document.getElementById('blik-code').value.replace(/\D/g,'');
+    const err = document.getElementById('err-blik');
+    if (code.length !== 6) { err.textContent = 'Kod BLIK musi mieć 6 cyfr'; ok = false; }
+    else { err.textContent = ''; }
+  }
+  if (ok) {
+    buildSummary();
+    goStep(4);
+  }
+}
+
+function buildSummary() {
+  const lines = Object.entries(cart).map(([id, qty]) => {
+    const p = products.find(x => x.id == id);
+    if (!p) return '';
+    return `<div class="summary-item">
+      <span class="summary-item-name">${p.emoji} ${p.name} × ${qty}</span>
+      <span class="summary-item-price">${(p.price*qty).toFixed(2).replace('.',',')} zł</span>
+    </div>`;
+  }).join('');
+  document.getElementById('modal-cart-lines').innerHTML = lines;
+
+  const codExtra = selectedPaymentMethod === 'cod' ? 2 : 0;
+  const cartTotal = Object.entries(cart).reduce((s,[id,q]) => {
+    const p = products.find(x=>x.id==id); return s+(p?p.price*q:0);
+  },0);
+  const grand = cartTotal + selectedDelivery.price + codExtra;
+  document.getElementById('summary-delivery-price').textContent =
+    selectedDelivery.price === 0 ? 'Bezpłatnie' : selectedDelivery.price.toFixed(2).replace('.',',') + ' zł';
+  document.getElementById('summary-grand-total').textContent = grand.toFixed(2).replace('.',',') + ' zł';
+
+  const addr = document.getElementById('summary-address');
+  addr.innerHTML = [
+    document.getElementById('f-name').value + ' ' + document.getElementById('f-surname').value,
+    document.getElementById('f-street').value,
+    document.getElementById('f-zip').value + ' ' + document.getElementById('f-city').value,
+    document.getElementById('f-country').value,
+    document.getElementById('f-phone').value,
+  ].map(l => `<div>${l}</div>`).join('');
+
+  const payNames = { blik:'📱 BLIK', card:'💳 Karta płatnicza', transfer:'🏦 Przelew online', cod:'💵 Za pobraniem' };
+  document.getElementById('summary-payment').innerHTML =
+    `<div>${payNames[selectedPaymentMethod]||selectedPaymentMethod}</div>
+     <div style="color:var(--muted);font-size:0.8rem;margin-top:0.3rem;">${selectedDelivery.name}</div>`;
+}
+
+function placeOrder() {
+  if (!document.getElementById('terms-check').checked) {
+    document.getElementById('err-terms').textContent = 'Musisz zaakceptować regulamin';
+    return;
+  }
+  document.getElementById('err-terms').textContent = '';
+  const ordNum = '#JZJ-' + Math.floor(10000 + Math.random()*90000);
+  document.getElementById('order-number').textContent = ordNum;
+  goStep(5);
+}
+
+function finishOrder() {
   cart = {};
   updateCartUI();
-  toggleCart();
+  closeCheckout();
 }
+
+function formatCardNum(el) {
+  let v = el.value.replace(/\D/g,'').slice(0,16);
+  el.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+
+function formatExpiry(el) {
+  let v = el.value.replace(/\D/g,'').slice(0,4);
+  if (v.length >= 2) v = v.slice(0,2) + '/' + v.slice(2);
+  el.value = v;
+}
+
+// Close modal on backdrop click
+document.getElementById('checkoutBackdrop').addEventListener('click', function(e) {
+  if (e.target === this) closeCheckout();
+});
 
 function showToast(msg) {
   const c = document.getElementById('toastContainer');
